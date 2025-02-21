@@ -6,6 +6,8 @@ What this basically means is that, taking Llama as an example (vocab size = 1282
 
 Fusing the last projection into a single triton kernel and chunking the loss and gradient calculation we can mitigate massively the memory requirement for a negligible cost in performance.
 
+**Note**: Since usually the projection layer does not have a bias term I did not include it in the implementation. For the inclusion one would need to declare an extra bias parameter (initialized to 0) and an extra tensor to store the gradient.
+
 ## Results
 <p align='center'><img src="plots/vocab_sizes.png"/><br/></p>
 
