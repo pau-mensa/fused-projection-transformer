@@ -11,9 +11,9 @@ Fusing the last projection into a single triton kernel and chunking the loss and
 ## Results
 <p align='center'><img src="plots/vocab_sizes.png"/><br/></p>
 
-As the figure shows, the larger the vocabulary size the more memory the model uses. By only using 2 chunks we can already reduce the memory requirement by more than 2X, and by chunking more we can keep reducing it. The dynamic chunking is an algorithmic approach that chunks at the pareto optimal limit between memory and time (further reducing the memory allocation would come in an exponential cost of time).
+As the figure shows, the larger the vocabulary size the more memory the model uses. By only using 2 chunks we can already reduce the memory requirement by more than 2X, and by chunking more we can keep reducing it. The dynamic chunking is an algorithmic approach that chunks as much as possible, based on the hidden dim of the net.
 
-The time spent on calculations is almost equal for all approaches, demonstrating that this fusion a very profitable tradeoff. However, as the vocabulary size increases the dynamic chunking keeps taking more and more time, which makes it only a suitable approach when dealing with very low memory environments or for showing where the optimal frontier is.
+The time spent on calculations is almost equal for all approaches, demonstrating that this fusion a very profitable tradeoff. However, as the difference between vocabulary size and hidden size increases we can observe that the dynamic chunking approach's time increases exponentially, which makes it only a viable option for very constrained memory environments or to show the limit of how much memory can be saved.
 
 ## Code
 - `modules.py` contains 2 modules, the baseline and the fused versions. The fused module calls an autograd function that implements the forward and backward passes of the operator. The autograd function chunks the input, calls a custom triton kernel that calculates the softmax and the loss and overwrites the logits tensor with the gradients.
